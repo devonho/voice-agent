@@ -1,0 +1,16 @@
+services:
+  agent:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./certs/creds.json:/certs/creds.json
+    environment:
+      - PORT=8080
+      - TWILIO_ACCOUNT_SID
+      - TWILIO_AUTH_TOKEN
+      - TWILIO_PHONE_NUMBER
+      - GOOGLE_APPLICATION_CREDENTIALS=/certs/creds.json
+      - GOOGLE_PROJECT_ID
+      - GOOGLE_AGENT_ID
+      - USE_TELEPHONY

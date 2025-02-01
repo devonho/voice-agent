@@ -1,0 +1,16 @@
+{
+    "TranscriptionSid": "GT8fbf72a043b98407a3ce68331cd0030a",
+    "Timestamp": "2024-06-25T18:45:12.135751Z",
+    "AccountSid": "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "ProviderConfiguration": "{\"profanityFilter\":\"true\",\"speechModel\":\"telephony\",\"enableAutomaticPunctuation\":\"true\",\"hints\":\"Alice Johnson, Bob Martin, ACME Corp, XYZ Enterprises, product demo, sales inquiry, customer feedback\"}",
+    "Name": "Chris Transcription",
+    "OutboundTrackLabel": "agent",
+    "LanguageCode": "en-US",
+    "PartialResults": "false",
+    "InboundTrackLabel": "customer",
+    "TranscriptionEvent": "transcription-started",
+    "CallSid": "CAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "TranscriptionEngine": "google",
+    "Track": "both_tracks",
+    "SequenceId": "1"
+  }

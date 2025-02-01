@@ -1,0 +1,12 @@
+{
+    "LanguageCode": "en-US",
+    "TranscriptionSid": "GT8fbf72a043b98407a3ce68331cd0030a",
+    "TranscriptionEvent": "transcription-content",
+    "CallSid": "CAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "TranscriptionData": "{\"transcript\":\"Hello, this is Sam from Horizon Financial Services. Just letting you know this call may be recorded for quality purposes. How can I assist you today?\",\"confidence\":0.9956335}",
+    "Timestamp": "2024-06-25T18:45:21.454203Z",
+    "Final": "true",
+    "AccountSid": "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "Track": "outbound_track",
+    "SequenceId": "2"
+  }
