@@ -107,27 +107,41 @@ public class TwilioWebSocketHandler implements WebSocketHandler {
                 //fos = new FileOutputStream(startEvent.streamSid + ".bin");
 
                 for (AudioChunkEventHandler eventHandler : eventHandlers) {
-                    eventHandler.onStart(startEvent.streamSid);
+                    try {
+                        eventHandler.onStart(startEvent.streamSid);                        
+                    } catch (Exception e) {
+                        logger.error("start stream callback: ", e);
+                    }
+                    
                 }                
 
                 break;
             case "media":
-                StreamMediaEvent mediaEvent = mapper.readValue(jsonString, StreamMediaEvent.class);
-                //logger.debug("stream: media {}", mediaEvent.media.chunk);
-                byte[] decoded = Base64.getDecoder().decode(mediaEvent.media.payload);
+                try {
+                    StreamMediaEvent mediaEvent = mapper.readValue(jsonString, StreamMediaEvent.class);
+                    //logger.debug("stream: media {}", mediaEvent.media.chunk);
+                    byte[] decoded = Base64.getDecoder().decode(mediaEvent.media.payload);
+    
+                    // Twilio: audio/x-mulaw, 8kHz, 1 channel
+                    // STT: audio/linear, 16kHz, 1 channel
+    
+                    InputStream is = new java.io.BufferedInputStream(new java.io.ByteArrayInputStream(decoded));
+                    AudioInputStream ais = new AudioInputStream(is, sourceFormat, decoded.length / 160);
+                    ais = AudioSystem.getAudioInputStream(AudioFormat.Encoding.PCM_SIGNED, ais);
+                    ais = AudioSystem.getAudioInputStream(destFormat, ais);
 
-                // Twilio: audio/x-mulaw, 8kHz, 1 channel
-                // STT: audio/linear, 16kHz, 1 channel
+                    //fos.write(decoded);
+                    for (AudioChunkEventHandler eventHandler : eventHandlers) {
+                        try {
+                            eventHandler.onAudioChunk(ais.readAllBytes(), mediaEvent.streamSid);
+                        } catch (Exception e) {
+                            logger.error("media stream callback: ", e);
+                        }
+                        
+                    }  
 
-                InputStream is = new java.io.BufferedInputStream(new java.io.ByteArrayInputStream(decoded));
-                AudioInputStream ais = new AudioInputStream(is, sourceFormat, decoded.length / 160);
-                ais = AudioSystem.getAudioInputStream(AudioFormat.Encoding.PCM_SIGNED, ais);
-                ais = AudioSystem.getAudioInputStream(destFormat, ais);
-                //this.audioInputWebSocket.pushChunk(ais.readAllBytes());
-                //logger.debug("chunk: {}", decoded.length);
-                //fos.write(decoded);
-                for (AudioChunkEventHandler eventHandler : eventHandlers) {
-                    eventHandler.onAudioChunk(ais.readAllBytes(), mediaEvent.streamSid);
+                } catch (Exception e) {
+                    logger.error("While transcoding audio: ", e);
                 }
                 
                 break;
@@ -137,7 +151,11 @@ public class TwilioWebSocketHandler implements WebSocketHandler {
 
                 //fos.close();
                 for (AudioChunkEventHandler eventHandler : eventHandlers) {
-                    eventHandler.onStop(stopEvent.streamSid);
+                    try {
+                        eventHandler.onStop(stopEvent.streamSid);
+                    } catch (Exception e) {
+                        logger.error("stop stream callback: ", e);
+                    }                    
                 }                
 
                 break;

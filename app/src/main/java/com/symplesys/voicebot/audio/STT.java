@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class STT
  {
     private static final Logger logger = LogManager.getLogger(STT.class);
-    private ClientStream<StreamingRecognizeRequest> clientStream;
+    //private ClientStream<StreamingRecognizeRequest> clientStream;
     public String streamId;
 
     @Autowired
@@ -31,7 +31,7 @@ public class STT
       this.audioSource = audioSource;
     }
 
-    private void sendStreamingConfigRequest() {
+    private void sendStreamingConfigRequest(ClientStream<StreamingRecognizeRequest> clientStream) {
         RecognitionConfig recognitionConfig = RecognitionConfig.newBuilder()
             .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
             .setLanguageCode("en-US")
@@ -45,13 +45,13 @@ public class STT
             .setStreamingConfig(streamingRecognitionConfig)
             .build(); // The first request in a streaming call has to be a config
 
-        this.clientStream.send(configRequest); // SampleRate:16000Hz, SampleSizeInBits: 16, Number of channels: 1, Signed: true, bigEndian: false
+        clientStream.send(configRequest); // SampleRate:16000Hz, SampleSizeInBits: 16, Number of channels: 1, Signed: true, bigEndian: false
         try {
           Thread.sleep(100);
         } catch (InterruptedException e) {}
     }
 
-    private void sendStreamingRecognizeRequest(byte[] data) {
+    private void sendStreamingRecognizeRequest(byte[] data, ClientStream<StreamingRecognizeRequest> clientStream) {
       StreamingRecognizeRequest request = StreamingRecognizeRequest.newBuilder()
       .setAudioContent(ByteString.copyFrom(data))
       .build();
@@ -94,28 +94,31 @@ public class STT
         };
 
         SpeechClient client = SpeechClient.create();
-        ClientStream<StreamingRecognizeRequest> clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
-        this.clientStream = clientStream;
+        //ClientStream<StreamingRecognizeRequest> clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
 
         AudioChunkEventHandler eventHandler = new AudioChunkEventHandler() {
+
+          ClientStream<StreamingRecognizeRequest> clientStream; 
+
           @Override
           public void onStart(String streamId) {
             logger.debug("Starting STT - sending config request");
             sttInstance.streamId = streamId;
-            sendStreamingConfigRequest();
+            clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
+            sendStreamingConfigRequest(clientStream);
           }
 
           @Override
           public void onStop(String streamId) {
             logger.debug("Stopping STT");
             clientStream.closeSend();
-            client.close();
+            //client.close();
           }
 
           @Override
           public void onAudioChunk(byte[] audioChunk, String streamId) {
             logger.trace("Sending chunk {}", audioChunk.length);
-            sendStreamingRecognizeRequest(audioChunk);
+            sendStreamingRecognizeRequest(audioChunk, clientStream);
           }
         };
         audioSource.registerEventHandler(eventHandler);
