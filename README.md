@@ -4,6 +4,8 @@ This is a demo of a conversational agent that integrates Google cloud's Dialogfl
 
 Dialogflow has built in support for Twilio, thus providing  functionality similar to this demo. What's different though, is that this demo interacts directly with Twilio's API, thus making it possible to get finer control over the telephony (e.g. make outbound calls with TWIML).
 
+[YouTube](https://youtu.be/e21PqxPLJAo)
+
 ## Pre-requisites
 
 * Twilio phone number
