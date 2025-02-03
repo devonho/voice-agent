@@ -36,7 +36,7 @@ public class DialogflowCXAgent {
   }
 
   // DialogFlow API Detect Intent sample with text inputs.
-  public String detectIntent(String text)
+  public String send(String text)
       throws IOException, ApiException {
     SessionsSettings.Builder sessionsSettingsBuilder = SessionsSettings.newBuilder();
     if (locationId.equals("global")) {

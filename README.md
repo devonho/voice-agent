@@ -92,3 +92,8 @@ docker compose up
 Browse to web UI at `http://localhost:8080`
 
 <img src="./docs/web_ui.png" style="width:400px" />
+
+
+## Architecture 
+
+See [Architecture](./app/README.md)

@@ -26,7 +26,7 @@ public class CXTests {
                 locationId, 
                 GOOGLE_AGENT_ID,        
                 sessionId, languageCode);
-            agent.detectIntent(text);
+            agent.send(text);
         } catch (ApiException e) {
             e.printStackTrace();
         } catch (IOException e) {

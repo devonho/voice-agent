@@ -21,7 +21,7 @@ public class Caller {
             @Override
             public void onResponse(String streamId, String transcript) {
                 try {
-                    String agentResponse = agent.detectIntent(transcript);
+                    String agentResponse = agent.send(transcript);
                     tts.push(streamId, agentResponse);
                 } catch (Exception e) {                        
                     logger.error(e.getMessage());
