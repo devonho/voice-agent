@@ -11,6 +11,7 @@ Dialogflow has built in support for Twilio, thus providing  functionality simila
 * Twilio phone number
 * Twilio API key
 * Google Cloud service account key
+* Google OAuth2 client ID (optional)
 * ngrok (during development)
 
 ### Twilio
@@ -32,6 +33,34 @@ Dialogflow has built in support for Twilio, thus providing  functionality simila
 Note: Agent ID can be found by clicking on the verticle elipsis and then selecting "Copy name"
 
 <img src="./docs/cx_agent_id.png" style="width:400px" />
+
+### OAuth2
+
+<img src="./docs/gcloud_oauth2_client_id.png" style="width:400px" />
+
+OAuth2 is enabled by default in the project. Follow the steps below to set it up:
+
+1. Create an OAuth2 client ID in Google Cloud's "APIs & Services" > "Credentials" select "OAuth 2.0 Client IDs"
+2. In "Authorized JavaScript origins" add "http://localhost:8080"
+3. In "Authorized redirect URIs" add "http://localhost:8080/login/oauth2/code/google"
+4. Copy the client's "Client ID" and "Client secret", and export them as environment variables `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID` and `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET` respectively.  
+
+**⚠⚠⚠ WARNING ⚠⚠⚠**
+
+The websocket listening on the route `/call-stream-websocket` for the Twilio callback, isn't protected as Twilio isn't able to provide a means to authenticate itself. It is recommended to restrict access to this endpoint by limiting IP addresses to Twilio's [edge locations](https://www.twilio.com/docs/global-infrastructure/edge-locations#twilio-docs-content-area).
+
+### Disabling OAuth2
+
+To disable OAuth2, the following dependencies must be removed from [pom.xml](./app/pom.xml)
+
+* spring-security-web
+* spring-security-config
+* spring-security-oauth2-core
+* spring-security-oauth2-client
+* spring-security-oauth2-jose
+
+Furthermore [OAuth2LoginSecurityConfig.java](./app/src/main/java/com/symplesys/voicebot/configuration/OAuth2LoginSecurityConfig.java) also has to be deleted.
+
 
 ### ngrok
 
@@ -63,6 +92,8 @@ endpoints:
 |GOOGLE_PROJECT_ID | Project ID |
 |GOOGLE_AGENT_ID |The Dialogflow CX agent ID|
 |USE_TELEPHONY | Flag to enable/disable telephony |
+|SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID| Google OAuth 2.0 client ID |
+|SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET| Google OAuth 2.0 client secret |
 
 
 ## Running
